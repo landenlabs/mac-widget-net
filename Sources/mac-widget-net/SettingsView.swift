@@ -1,3 +1,4 @@
+// Copyright (c) 2026 LanDen Labs - Dennis Lang
 import SwiftUI
 
 struct SettingsView: View {
@@ -80,7 +81,7 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 360, height: 520)
+        .frame(minWidth: 300, minHeight: 400)
     }
 
     private func formatDuration(_ s: Double) -> String {

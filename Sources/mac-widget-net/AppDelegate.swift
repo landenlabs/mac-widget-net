@@ -1,3 +1,4 @@
+// Copyright (c) 2026 LanDen Labs - Dennis Lang
 import AppKit
 import SwiftUI
 import Combine
@@ -56,12 +57,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         width: CGFloat, height: CGFloat,
         title: String,
         rootView: some View,
+        styleMask: NSWindow.StyleMask = [.titled, .closable],
         controller: inout NSWindowController?
     ) {
         if controller == nil {
             let win = NSWindow(
                 contentRect: NSRect(x: 0, y: 0, width: width, height: height),
-                styleMask:   [.titled, .closable],
+                styleMask:   styleMask,
                 backing:     .buffered,
                 defer:       false
             )
@@ -93,15 +95,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             width: 360, height: 520,
             title: "Network Traffic Widget — Settings",
             rootView: SettingsView(appState: appState),
+            styleMask: [.titled, .closable, .resizable, .miniaturizable],
             controller: &settingsWindowController
         )
     }
 
     @objc func openAbout() {
         openWindow(
-            width: 320, height: 280,
+            width: 480, height: 540,
             title: "About Network Traffic Widget",
             rootView: AboutView(),
+            styleMask: [.titled, .closable, .resizable, .miniaturizable],
             controller: &aboutWindowController
         )
     }

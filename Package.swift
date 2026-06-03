@@ -7,7 +7,8 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "mac-widget-net",
-            path: "Sources/mac-widget-net"
+            path: "Sources/mac-widget-net",
+            resources: [.process("Resources")]
         )
     ]
 )
