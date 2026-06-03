@@ -1,0 +1,29 @@
+name: Build macOS Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build (release)
+        run: swift build -c release
+
+      - name: Zip binary
+        run: |
+          cd .build/release
+          zip mac-widget-net-${{ github.ref_name }}.zip mac-widget-net
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: .build/release/mac-widget-net-${{ github.ref_name }}.zip
+          generate_release_notes: true
