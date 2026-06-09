@@ -74,14 +74,14 @@ A lightweight, transparent **Network Traffic desktop widget** for macOS. Display
 ### Build from source
 
 ```bash
-git clone https://github.com/landenlabs/mac-widget-net.git
-cd mac-widget-net
+git clone https://github.com/landenlabs/MacWidgetNet.git
+cd MacWidgetNet
 swift build -c release
 ```
 
 The built binary is at:
 ```
-.build/release/mac-widget-net
+.build/release/MacWidgetNet
 ```
 
 Run it directly or copy it to `/Applications` or any location in your `PATH`.
@@ -137,7 +137,7 @@ Open Settings via **Settings… (⌘,)** in the status bar menu.
 
 Settings are saved automatically to:
 ```
-~/Library/Application Support/mac-widget-net/settings.json
+~/Library/Application Support/MacWidgetNet/settings.json
 ```
 
 ---
@@ -172,8 +172,8 @@ swift run
 ## Project Structure
 
 ```
-mac-widget-net/
-├── Sources/mac-widget-net/
+MacWidgetNet/
+├── Sources/MacWidgetNet/
 │   ├── main.swift                  # Entry point
 │   ├── AppDelegate.swift           # Menu bar setup and window lifecycle
 │   ├── AppState.swift              # Observable state, JSON persistence

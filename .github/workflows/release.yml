@@ -20,10 +20,10 @@ jobs:
       - name: Zip binary
         run: |
           cd .build/release
-          zip mac-widget-net-${{ github.ref_name }}.zip mac-widget-net
+          zip MacWidgetNet-${{ github.ref_name }}.zip MacWidgetNet
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: .build/release/mac-widget-net-${{ github.ref_name }}.zip
+          files: .build/release/MacWidgetNet-${{ github.ref_name }}.zip
           generate_release_notes: true

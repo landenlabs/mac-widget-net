@@ -13,7 +13,7 @@ final class AppState: ObservableObject {
 
     private init() {
         let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        let dir = support.appendingPathComponent("mac-widget-net")
+        let dir = support.appendingPathComponent("MacWidgetNet")
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         saveURL = dir.appendingPathComponent("settings.json")
 

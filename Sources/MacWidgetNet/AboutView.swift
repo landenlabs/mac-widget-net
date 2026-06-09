@@ -129,8 +129,8 @@ struct AboutView: View {
                     HStack(spacing: 4) {
                         Text("GitHub:")
                             .foregroundColor(.secondary)
-                        Link("https://github.com/landenlabs/mac-widget-net",
-                             destination: URL(string: "https://github.com/landenlabs/mac-widget-net")!)
+                        Link("https://github.com/landenlabs/MacWidgetNet",
+                             destination: URL(string: "https://github.com/landenlabs/MacWidgetNet")!)
                             .font(.system(.body, design: .monospaced))
                     }
                 }
@@ -158,7 +158,7 @@ struct AboutView: View {
 
     private var settingsPath: String {
         let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        return support.appendingPathComponent("mac-widget-net/settings.json").path
+        return support.appendingPathComponent("MacWidgetNet/settings.json").path
     }
 
     private func infoRow(_ label: String, _ value: String) -> some View {

@@ -2,12 +2,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "mac-widget-net",
+    name: "MacWidgetNet",
     platforms: [.macOS(.v13)],
     targets: [
         .executableTarget(
-            name: "mac-widget-net",
-            path: "Sources/mac-widget-net",
+            name: "MacWidgetNet",
+            path: "Sources/MacWidgetNet",
             resources: [.process("Resources")]
         )
     ]
