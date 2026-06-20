@@ -15,16 +15,16 @@ final class DragOverlayView: NSView {
     }
 
     override func mouseDown(with event: NSEvent) {
-        dragStart = event.locationInWindow
+        dragStart = NSEvent.mouseLocation
         winStart  = window?.frame.origin ?? .zero
         NSCursor.closedHand.set()
     }
 
     override func mouseDragged(with event: NSEvent) {
         guard let win = window else { return }
-        let loc     = event.locationInWindow
-        let delta   = NSPoint(x: loc.x - dragStart.x, y: loc.y - dragStart.y)
-        let newOrigin = NSPoint(x: winStart.x + delta.x, y: winStart.y + delta.y)
+        let loc       = NSEvent.mouseLocation
+        let newOrigin = NSPoint(x: winStart.x + loc.x - dragStart.x,
+                                y: winStart.y + loc.y - dragStart.y)
         win.setFrameOrigin(newOrigin)
         onMove?(newOrigin)
     }
