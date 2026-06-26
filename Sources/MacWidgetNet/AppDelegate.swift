@@ -117,6 +117,9 @@ extension AppDelegate: NSMenuDelegate {
     func menuNeedsUpdate(_ menu: NSMenu) {
         menu.removeAllItems()
 
+        menu.addItem(titleItem("Wid-Net"))
+        menu.addItem(.separator())
+
         let dragging  = windowManager?.isDragging ?? false
         let moveTitle = dragging ? "Done Moving Widget" : "Move Widget…"
         menu.addItem(item(moveTitle, action: #selector(toggleDragMode)))
@@ -125,11 +128,36 @@ extension AppDelegate: NSMenuDelegate {
         menu.addItem(item("About…",    action: #selector(openAbout)))
         menu.addItem(.separator())
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+
+        menu.addItem(.separator())
+        menu.addItem(versionItem())
     }
 
     private func item(_ title: String, action: Selector, key: String = "") -> NSMenuItem {
         let it = NSMenuItem(title: title, action: action, keyEquivalent: key)
         it.target = self
+        return it
+    }
+
+    /// Bold, non-clickable title shown at the top of the menu.
+    private func titleItem(_ title: String) -> NSMenuItem {
+        let it = NSMenuItem(title: title, action: nil, keyEquivalent: "")
+        it.attributedTitle = NSAttributedString(
+            string: title,
+            attributes: [.font: NSFont.boldSystemFont(ofSize: NSFont.systemFontSize)])
+        it.isEnabled = false
+        return it
+    }
+
+    /// Small, light, non-clickable version label shown at the bottom of the menu.
+    private func versionItem() -> NSMenuItem {
+        let text = "v\(appVersion)"
+        let it = NSMenuItem(title: text, action: nil, keyEquivalent: "")
+        it.attributedTitle = NSAttributedString(
+            string: text,
+            attributes: [.font: NSFont.systemFont(ofSize: NSFont.smallSystemFontSize),
+                         .foregroundColor: NSColor.secondaryLabelColor])
+        it.isEnabled = false
         return it
     }
 }
