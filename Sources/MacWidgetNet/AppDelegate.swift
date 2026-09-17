@@ -151,7 +151,8 @@ extension AppDelegate: NSMenuDelegate {
 
     /// Small, light, non-clickable version label shown at the bottom of the menu.
     private func versionItem() -> NSMenuItem {
-        let text = "v\(appVersion)"
+        let v = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? appVersion
+        let text = "v\(v)"
         let it = NSMenuItem(title: text, action: nil, keyEquivalent: "")
         it.attributedTitle = NSAttributedString(
             string: text,
