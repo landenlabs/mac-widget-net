@@ -79,12 +79,36 @@ struct SettingsView: View {
                     Slider(value: cfg.backgroundOpacity, in: 0...0.6, step: 0.05)
                 }
             }
+
+            Section("System") {
+                LaunchAtLoginToggle()
+            }
         }
         .formStyle(.grouped)
-        .frame(minWidth: 300, minHeight: 400)
+        .frame(minWidth: 300, minHeight: 440)
     }
 
     private func formatDuration(_ s: Double) -> String {
         Int(s) < 60 ? "\(Int(s)) sec" : "\(Int(s) / 60) min"
+    }
+}
+
+/// "Launch at login" checkbox shared by the settings panes. Holds its own
+/// state so the checkmark refreshes after toggling.
+struct LaunchAtLoginToggle: View {
+    @State private var enabled = LoginItem.isEnabled
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Toggle("Launch at login", isOn: Binding(
+                get: { enabled },
+                set: { LoginItem.set(enabled: $0); enabled = LoginItem.isEnabled }
+            ))
+            .disabled(!LoginItem.isRunningFromAppBundle)
+            if !LoginItem.isRunningFromAppBundle {
+                Text("Only available when running the installed app from /Applications.")
+                    .font(.caption).foregroundColor(.secondary)
+            }
+        }
     }
 }

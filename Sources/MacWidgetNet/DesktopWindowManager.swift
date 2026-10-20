@@ -27,7 +27,7 @@ final class DesktopWindowManager: NSObject {
         let cfg  = appState.config
         let size = cfg.windowSize
 
-        let win = NSWindow(
+        let win = WidgetWindow(
             contentRect: NSRect(x: cfg.effectiveX, y: cfg.effectiveY,
                                 width: size.width, height: size.height),
             styleMask:   .borderless,
@@ -48,6 +48,13 @@ final class DesktopWindowManager: NSObject {
         win.orderFront(nil)
         self.window = win
 
+        // Move to the position remembered for the new display arrangement when
+        // screens are added/removed (also fires as externals attach after login/wake).
+        NotificationCenter.default.publisher(for: NSApplication.didChangeScreenParametersNotification)
+            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+            .sink { [weak self] _ in self?.updatePosition() }
+            .store(in: &cancellables)
+
         // Resize when graphWidth / graphHeight change
         appState.$config
             .map { ($0.windowSize.width, $0.windowSize.height) }
@@ -66,6 +73,12 @@ final class DesktopWindowManager: NSObject {
         cancellables.removeAll()
     }
 
+    func updatePosition() {
+        guard let win = window, !isDragging else { return }
+        let cfg = appState.config
+        win.setFrameOrigin(NSPoint(x: cfg.effectiveX, y: cfg.effectiveY))
+    }
+
     // MARK: - Drag Mode
 
     func toggleDragMode() {
@@ -77,6 +90,9 @@ final class DesktopWindowManager: NSObject {
         isDragging = true
 
         win.level             = .floating
+        NSApp.activate(ignoringOtherApps: true)
+        win.orderFrontRegardless()
+        win.makeKey()
         win.ignoresMouseEvents = false
 
         let overlay = DragOverlayView(frame: contentView.bounds)
@@ -86,6 +102,7 @@ final class DesktopWindowManager: NSObject {
         }
         contentView.addSubview(overlay, positioned: .above, relativeTo: nil)
         dragOverlay = overlay
+        (win as? WidgetWindow)?.onDragMove = overlay.onMove
     }
 
     private func disableDragMode() {
@@ -94,6 +111,7 @@ final class DesktopWindowManager: NSObject {
 
         dragOverlay?.removeFromSuperview()
         dragOverlay = nil
+        (win as? WidgetWindow)?.onDragMove = nil
 
         win.level             = desktopLevel
         win.ignoresMouseEvents = true
@@ -110,5 +128,37 @@ extension DesktopWindowManager: NSWindowDelegate {
     func windowDidMove(_ notification: Notification) {
         guard isDragging, let win = window else { return }
         appState.updatePosition(x: win.frame.origin.x, y: win.frame.origin.y)
+    }
+}
+
+/// Borderless window that can take key status and handles drag-mode mouse events itself.
+final class WidgetWindow: NSWindow {
+    override var canBecomeKey:  Bool { true }
+    override var canBecomeMain: Bool { false }
+
+    /// Set while in drag mode; handles the drag before any view (incl. SwiftUI's) sees the event.
+    var onDragMove: ((NSPoint) -> Void)?
+    private var dragStart: NSPoint = .zero
+    private var winStart:  NSPoint = .zero
+
+    override func sendEvent(_ event: NSEvent) {
+        guard onDragMove != nil else { return super.sendEvent(event) }
+        switch event.type {
+        case .leftMouseDown:
+            dragStart = NSEvent.mouseLocation
+            winStart  = frame.origin
+            NSCursor.closedHand.set()
+        case .leftMouseDragged:
+            let loc = NSEvent.mouseLocation
+            let origin = NSPoint(x: winStart.x + loc.x - dragStart.x,
+                                 y: winStart.y + loc.y - dragStart.y)
+            setFrameOrigin(origin)
+            onDragMove?(origin)
+        case .leftMouseUp:
+            NSCursor.openHand.set()
+            onDragMove?(frame.origin)
+        default:
+            super.sendEvent(event)
+        }
     }
 }

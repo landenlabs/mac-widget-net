@@ -111,6 +111,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
+extension AppDelegate {
+    @objc fileprivate func toggleLaunchAtLogin() {
+        LoginItem.set(enabled: !LoginItem.isEnabled)
+    }
+}
+
 // MARK: - NSMenuDelegate
 
 extension AppDelegate: NSMenuDelegate {
@@ -126,6 +132,19 @@ extension AppDelegate: NSMenuDelegate {
         menu.addItem(.separator())
         menu.addItem(item("Settings…", action: #selector(openSettings), key: ","))
         menu.addItem(item("About…",    action: #selector(openAbout)))
+        menu.addItem(.separator())
+
+        let loginItem = NSMenuItem(title: "Launch at Login",
+                                   action: #selector(toggleLaunchAtLogin),
+                                   keyEquivalent: "")
+        loginItem.state  = LoginItem.isEnabled ? .on : .off
+        loginItem.target = self
+        if !LoginItem.isRunningFromAppBundle {
+            loginItem.toolTip = "Only available when running the installed app from /Applications."
+            loginItem.isEnabled = false
+        }
+        menu.addItem(loginItem)
+
         menu.addItem(.separator())
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
 
